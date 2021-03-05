@@ -1,0 +1,178 @@
+<div class="popup-overlay">
+  <div class="popup">
+    <div  class="custom_pop_up close">
+   <img src="https://cdn.shopify.com/s/files/1/0443/3258/1022/files/close-icon-13612.png?v=1611034633">
+   </div>
+    <p class="pop_up">Store only delivers to countries in North America, Central and South America.</p>
+    
+  </div>
+</div>
+<style>
+  .popup-overlay
+  {
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    z-index: 9999;
+    right:0;
+    bottom:0;
+    background-color:rgba(0,0,0,.5);
+    width:100%;
+    height:100%;
+    text-align:center;
+    padding:1rem;
+    align-items:center;
+    justify-content:center;
+  }
+    .popup
+  {
+/*       display:inline-block; */
+     max-width: 550px;
+      height: 250px;
+/*       background: white !important;
+      border-radius: 5px;
+      display:flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items:center;
+      justify-content:center;
+      position: relative;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      flex-direction: column;
+      max-width: 621px; */
+    }
+ 
+
+  p.pop_up{
+    flex: 0 1 100%;
+    padding:0 1rem;
+    margin:0;
+    margin-top:1rem;
+    font-family:sans-serif;
+
+}
+ 
+
+  .custom_pop_up.close
+  {     margin-top:0;
+    display:inline-block;
+    color:#ffffff;
+    border-radius: 5px; 
+    padding: .25rem 1rem;
+/*         text-align: right;
+    width: 100%; */
+    text-decoration: none;
+    text-transform: uppercase;
+    font-family: sans-serif;
+    margin-right:1rem; 
+    &:last-of-type
+    {
+      margin-right:0;
+    }
+  }
+  .popup-overlay .popup 
+  {
+    background: white;
+  }
+  
+</style>
+<script>
+  jQuery(document).ready(function($) {
+
+    //check to see if the submited cookie is set, if not check if the popup has been closed, if not then display the popup
+
+    if(getCookie('popupCookie') != 'closed' ){
+
+      $.get("https://ipinfo.io/json", function(response) {
+        var cuntry_code=response.country;
+
+
+        var isoCountries = {
+          'BZ' : 'Belize',
+          'CR' : 'Costa Rica',
+          'SV' : 'El Salvador',
+          'GT' : 'Guatemala',
+          'HN' : 'Honduras',
+          'NI' : 'Nicaragua',
+          'PA' : 'Panama',
+          'BR' : 'Brazil',
+          'CO' : 'Colombia',
+          'AR' : 'Argentina',
+          'PE' : 'Peru',
+          'VE' : 'Venezuela',
+          'CL' : 'Chile',
+          'EC' : 'Ecuador',
+          'BO' : 'Bolivia',
+          'PY' : 'Paraguay',
+          'UY' : 'Uruguay',
+          'GY' : 'Guyana',
+          'SR' : 'Suriname',
+          'GF' : 'French Guiana',
+          'FK' : 'Falkland Islands',
+          'CR' : 'Costa Rica',
+          'DO' : 'Dominican Republic',
+          'HT' : 'Haiti',
+          'BZ' : 'Belize',
+          'BS' : 'Bahamas',
+          'JM' : 'Jamaica',
+          'TT' : 'Trinidad And Tobago',
+          'DM' : 'Dominica',
+          'LC' : 'Saint Lucia',
+          'CA' : 'Canada',
+          'US' : 'United States',
+          'MX' : 'Mexico',
+          'NI' : 'Nicaragua',
+          'HN' : 'Honduras',
+          'CU' : 'Cuba',
+          'GT' : 'Guatemala',
+          'PA' : 'Panama',
+          'KN' : 'Saint Kitts And Nevis',
+          'GD' : 'Grenada',
+          'VC' : 'Saint Vincent And Grenadines',
+          'BB' : 'Barbados',
+          'AG' : 'Antigua And Barbuda'
+        };
+        if (isoCountries[cuntry_code] !== undefined){
+          // console.log(isoCountries[cuntry_code]);
+        }
+        else{
+          $('.popup-overlay').css("display", "flex").hide().fadeIn();
+        }     
+      }, "jsonp");
+    }
+    $('.custom_pop_up.close').click(function(){
+      $('.popup-overlay').fadeOut();
+      //sets the coookie to one minute if the popup is closed (whole numbers = days)
+      setCookie( 'popupCookie', 'closed', 1 );
+    });
+    function getCookie(cname) {
+      var name = cname + "=";
+      var ca = document.cookie.split(';');
+      for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          return c.substring(name.length, c.length);
+        }
+      }
+      return "";
+    }
+
+    function setCookie(cname, cvalue, exdays) {
+      var d = new Date();
+      d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+      var expires = "expires=" + d.toUTCString();
+      document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+  });
+</script>
