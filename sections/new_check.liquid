@@ -1,0 +1,39 @@
+<div class="page-width">
+  <div class="grid">
+  {% if section.settings.theme_new  != blank %}
+  <img src="{{section.settings.theme_new | img_url:"large"}}" />
+  {% endif %}
+  {% if section.settings.theme_n  != blank %}
+  <img src="{{section.settings.theme_n | img_url:"large"}}" />
+  {% endif %}
+  </div>
+  </div>
+{% schema %}
+  { 
+    "name": "New Theme Kit",
+    "settings": [
+ 
+    {
+       "type":"image_picker",
+       "id":"theme_new",
+       "label":"Images"
+       }, 
+       {
+       "type":"image_picker",
+       "id":"theme_n",
+       "label":"Image 2"
+       },
+        {
+       "type":"image_picker",
+       "id":"theme_n11",
+       "label":"Image 2"
+       }
+      ] 
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

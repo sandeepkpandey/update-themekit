@@ -1,0 +1,171 @@
+{% if collection.all_types.size != 1 %}
+<div class="accordion_head">Filter <span class="plusminus">+</span>
+</div>
+<div class="accordion_body" style="display: block;">
+    <div class="accordion_head1 filter tags">Size <span class="plusminus">+</span>
+  </div>
+  <div id="filter-3">
+    <ul class="filter tags size">
+      {% for tag in collection.all_tags %}
+      {% if tag contains 'Size_' %}
+      <li title="{{tag | handleize}}" class="{{ tag | remove:"Size_"}}">
+        {{ tag |  link_to_remove_tag: tag}}
+      </li>
+      {% endif %} {% endfor %} 
+    </ul>
+  </div>
+  <div class="accordion_head1 filter tags">Color <span class="plusminus">+</span>
+  </div>
+  <div id="filter-2">
+    <ul class="filter tags colors">
+      {% for tag in collection.all_tags %} 
+      {% if tag contains 'Color_' %}
+      <li class="{{tag | remove:"color_"}}" data-filterurl="{{tag}}" title="{{tag | handleize}}">
+        {{ tag | link_to_add_tag: tag }}
+      </li>
+      {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+<div class="accordion_head1 filter tags">Brand <span class="plusminus">+</span>
+  </div>
+  <div id="filter-1">
+    <ul  class="filter tags brand">
+      {%- for product_vendor in shop.vendors -%}
+      <li class="{{product_vendor}}" title="{{product_vendor | handleize}}">
+        {{ product_vendor | link_to_vendor }}
+      </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</div>
+{% endif %}
+<script>
+  $(document).ready(function(){
+    $(function () {
+      var popped = ('state' in window.history && window.history.state !== null),
+          initialURL = location.href;
+
+      //function to handle the scenarios where back and forward buttons used in browser
+      $(window).bind("popstate", function (e) {
+        // Ignore inital popstate that some browsers fire on page load
+        var initialPop = !popped && location.href == initialURL;
+        popped = true;
+        if (initialPop) {
+          return;
+        }
+        ajaxLoadPage(location.href);
+      });
+
+      //the ajax function that does the AJAX calls to get the products and load them into the grid
+      var ajaxLoadPage = function (url) {
+        $.ajax({
+          type: 'GET',
+          url: url,
+          data: {},
+          complete: function (data) {
+            $('#Collection').html($("#Collection", data.responseText).html());
+            history.pushState({
+              page: url
+            }, url, url);
+          }
+        });
+      }
+
+      {% capture pathUrl %}{% if collection.handle %}{% capture url %}/collections/{{ collection.handle }}{% endcapture %}{{ url }}{% elsif collection.all_products_count > 0 and collection.products.first.type == collection.title %}{{ link_to_type }}{% elsif collection.all_products_count > 0 and collection.products.first.vendor == collection.title %}{{ link_to_vendor }}{% endif %}{% endcapture %}
+
+      var collectionUrl = window.location.protocol+'//'+window.location.hostname+'{{ pathUrl}}';  
+
+      //this detects one of the filters being clicked that should then 
+      //decide what URL to call in order to get the newly filtered product grid
+      $("#filter-1 ul li a, #filter-2 ul li a, #filter-3 ul li a").click(function (event) {
+        event.preventDefault();
+        var title = $(this).attr('title');
+        var self = this;
+
+        /// check if the click is on a "remove tag" filter
+        var isRemoveFilter = false;
+        if ($(this).parent().hasClass('active')) {
+          $(this).parent().removeClass('active');
+          $(this).removeAttr('title');
+          isRemoveFilter = true;
+        } else if ($(this).parent().hasClass("all")) {
+          //check if "all brands" or "all colors" clicked
+          var ul = $(this).parent().parent();
+          $('li', ul).removeClass('active');
+          $('li a', ul).removeAttr('title');
+          isRemoveFilter = true;
+        } else {
+          //otherwise it means click on an unfiltered tag
+          //remove other "Remove tag" in same filter row
+          var ul = $(this).parent().parent();
+          $('li', ul).removeClass('active');
+          $('li a', ul).removeAttr('title');
+
+          //add the active tag onto the new filter that was clicked
+          $(this).parent().addClass('active');
+          var urlTest= $(this).attr('title', 'Remove tag ' + $(this).text());
+          console.log(urlTest);
+        }
+
+        var activeBrand = '';
+        if ($('#filter-1 ul li.active a').length > 0) {
+          activeBrand = $('#filter-1 ul li.active').data('filterurl');
+        }
+        var activeColor = '';
+        if ($('#filter-2 ul li.active a').length > 0) {
+          activeColor = $('#filter-2 ul li.active').data('filterurl');
+        }
+        var activeSize = '';
+        if ($('#filter-3 ul li.active a').length > 0) {
+          activeSize = $('#filter-3 ul li.active').data('filterurl');
+        }
+
+        var selectedBrand = '';
+        if ($(this).parents().hasClass('brands') && !isRemoveFilter) {
+          selectedBrand = $(this).text();
+        }
+        var selectedColor = '';
+        if ($(this).parents().hasClass('colors') && !isRemoveFilter) {
+          selectedColor = $(this).text();
+        }
+        var selectedSize = '';
+        if ($(this).parents().hasClass('size') && !isRemoveFilter) {
+          selectedSize = $(this).text();
+        }
+
+        //             console.log('activeBrand = ' + activeBrand);
+        //             console.log('activeColor = ' + activeColor);
+        //             console.log('activeColor = ' + activeSize);
+        //             console.log('selectedBrand = ' + selectedBrand);
+        //             console.log('selectedColor = ' + selectedColor);
+        //              console.log('selectedSize = ' + selectedSize);
+        var url = $(this).attr('href');
+
+        var newBrand = selectedBrand || activeBrand;
+        var newColor = selectedColor || activeColor;
+        var newSize = selectedSize   || activeSize;
+        //             console.log('newBrand = ' + newBrand);
+        //             console.log('newColor = ' + newColor);
+        //              console.log('newColor = ' + newSize);
+        url = collectionUrl + "/";
+        if (newBrand != "" && newColor != "" && newSize != "") {
+          url += newBrand + "+" + newColor + "+" +newSize;
+        }
+       else if (newColor != "" && newSize != "") {
+          url += newColor + "+" +newSize;
+        } else if (newColor != "") {
+          url += newColor;
+        } else if (newBrand != "") {
+          url += newBrand;
+        } else if (newSize != "") {
+          url += newSize;
+        }
+
+        //console.log(url);	
+        ajaxLoadPage(url);
+      });
+
+    });
+  });
+</script>

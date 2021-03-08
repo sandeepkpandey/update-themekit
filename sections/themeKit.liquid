@@ -1,0 +1,30 @@
+<div class="page-width">
+  <div class="grid">
+  <img src="{{section.settings.theme | img_url:"large"}}" />
+  <img src="{{section.settings.theme12 | img_url:"large"}}" />
+  </div>
+  </div>
+{% schema %}
+  {
+    "name": "Theme kit",
+    "settings": [
+
+       {
+       "type":"image_picker",
+       "id":"theme",
+       "label":"Images"
+       }, 
+       {
+       "type":"image_picker",
+       "id":"theme12",
+       "label":"Image 2"
+       }
+      ] 
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

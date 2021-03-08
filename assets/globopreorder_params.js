@@ -1,0 +1,1 @@
+var GPOParams = {"id":8237,"shop_id":8223,"button_title":"Pre Order","button_description":"We will fulfill the item as soon as it becomes available","not_available_message":"Not available for Pre order","order_tag":"pre-order","preorder_stock_limited_message":"Only :stock items left in stock.","preorder_avaiable_message":"Available on:","line_property_name":"Pre-order item"}
